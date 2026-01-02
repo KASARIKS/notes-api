@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+
+	"github.com/kasariks/notes_api/service/user"
 )
 
 type APIServer struct {
@@ -29,5 +31,7 @@ func (s *APIServer) Run() error {
 }
 
 func (s *APIServer) registerServiceRoutes() {
-	
+	userStore := user.NewStore(s.db)
+	userHandler := user.NewHandler(userStore)
+	userHandler.RegisterRoutes(s.router)
 }
