@@ -24,8 +24,3 @@ type LoginUserPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
-
-type DeleteUserPayload struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}

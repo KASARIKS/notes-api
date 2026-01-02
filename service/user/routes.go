@@ -21,9 +21,12 @@ func NewHandler(store types.UserStore) *Handler {
 	}
 }
 
+// eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOjYwNDgwMCwidXNlcklEIjoxfQ.UVAHARPkfa7D4Fe_lDzKGef5u7Ei7-hh-C-XeLpXnDpTIVFhypQPr1dnAB1AaWIy80lwsxUjh4oXAatg07RRtg
+
 func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("POST /register", h.HandleRegister)
 	router.HandleFunc("POST /login", h.HandleLogin)
+	router.HandleFunc("DELETE /delete_user", auth.WithJWTAuth(h.HandleUserDeleting, h.store))
 }
 
 func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
@@ -106,4 +109,13 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+}
+
+func (h *Handler) HandleUserDeleting(w http.ResponseWriter, r *http.Request) {
+	userID := auth.GetUserIdFromContext(r.Context())
+
+	if err := h.store.DeleteUserById(userID); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
 }
