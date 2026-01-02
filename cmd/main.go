@@ -5,10 +5,16 @@ import (
 
 	"github.com/kasariks/notes_api/cmd/api"
 	"github.com/kasariks/notes_api/config"
+	"github.com/kasariks/notes_api/db"
 )
 
 func main() {
-	server := api.NewAPIServer(":"+config.Envs.Port, nil)
+	db, err := db.NewSQLiteStorage(config.Envs.DBName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server := api.NewAPIServer(":"+config.Envs.Port, db)
 
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
