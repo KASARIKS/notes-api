@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/kasariks/notes_api/service/note"
 	"github.com/kasariks/notes_api/service/user"
 )
 
@@ -34,4 +35,8 @@ func (s *APIServer) registerServiceRoutes() {
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(s.router)
+
+	noteStore := note.NewStore(s.db)
+	noteHandler := note.NewHandler(noteStore, userStore)
+	noteHandler.RegisterRoutes(s.router)
 }
